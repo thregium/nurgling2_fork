@@ -70,7 +70,8 @@ public class OCache implements Iterable<Gob> {
     }
 
     public OCache(Glob glob) {
-	this.glob = glob;
+		this.glob = glob;
+		gobAction(Gob::updateCustomSize);
     }
 
     public synchronized void callback(ChangeCallback cb) {
@@ -329,6 +330,7 @@ public class OCache implements Iterable<Gob> {
 			g.addol(nol, false);
 			ol.remove(false);
 		    }
+			g.updateCustomSize();
 		}
 		if(nol != null)
 		    nol.delign = prs;
@@ -350,6 +352,7 @@ public class OCache implements Iterable<Gob> {
 	    int len = msg.uint8();
 	    Message dat = (len > 0) ? new MessageBuf(msg.bytes(len)) : null;
 	    resid.get().getcode(GAttrib.Parser.class, true).apply(g, dat);
+		g.updateCustomSize();
 	}
     }
 
@@ -509,4 +512,13 @@ public class OCache implements Iterable<Gob> {
 	    return(ng);
 	}
     }
+
+	public void gobAction(Consumer<Gob> action) {
+		synchronized (this) {
+			for (Gob g : this) {
+				action.accept(g);
+			}
+			local.forEach(gobs -> gobs.forEach(action));
+		}
+	}
 }

@@ -40,6 +40,11 @@ public class Config {
     public static final Variable<Boolean> par = Variable.def(() -> true);
     public final Properties localprops = getlocalprops();
 
+
+	public static boolean flatcupboards = Utils.getprefb("flatcupboards", true);
+	public static boolean flatwalls = Utils.getprefb("flatwalls", false);
+	public static boolean flatcaves = Utils.getprefb("flatcaves", false);
+
     private static Config global = null;
     public static Config get() {
 	if(global != null)

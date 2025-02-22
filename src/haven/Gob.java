@@ -28,6 +28,7 @@ package haven;
 
 import java.util.*;
 import java.util.function.*;
+import java.awt.Color;
 import haven.render.*;
 import nurgling.*;
 import nurgling.tools.NParser;
@@ -49,6 +50,9 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
     private Loader.Future<?> deferral = null;
 
 	public NGob ngob;
+
+	private final GobSizing customSize = new GobSizing();
+
     public static class Overlay implements RenderTree.Node {
 	public final int id;
 	public final Gob gob;
@@ -57,6 +61,7 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	public boolean delign = false, old = false;
 	private Collection<RenderTree.Slot> slots = null;
 	private boolean added = false;
+
 
 	public Overlay(Gob gob, int id, Sprite.Mill<?> sm) {
 	    this.gob = gob;
@@ -138,9 +143,14 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 
 	public void added(RenderTree.Slot slot) {
 	    slot.add(spr);
-	    if(slots == null)
-		slots = new ArrayList<>(1);
+	    if(slots == null) slots = new ArrayList<>(1);
 	    slots.add(slot);
+		if (this.spr != null && this.spr.res != null && this.spr.res.name.contains("decal")){
+			if (Config.flatcupboards && this.spr.owner.getres().name.equals("gfx/terobjs/cupboard"))
+				slot.cstate(Pipe.Op.compose(Location.scale(1, 1, 1.6f), Location.xlate(new Coord3f(0, 0, -5.4f))));
+			slot.ostate(new MixColor(new Color(255, 255, 255, 0)));
+		}
+
 	}
 
 	public void removed(RenderTree.Slot slot) {
@@ -438,6 +448,8 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
 	if(id < 0)
 	    virtual = true;
 	ngob = new NGob(this);
+	setupmods.add(customSize);
+	updwait(this::updateCustomSize, waiting -> {});
     }
 
     public Gob(Glob glob, Coord2d c) {
@@ -1061,4 +1073,26 @@ public class Gob implements RenderTree.Node, Sprite.Owner, Skeleton.ModOwner, Eq
             }
         }
     }
+
+
+	public void updateCustomSize(){
+		customSize.update(this);
+		if (getres() != null && getres().name.equals("gfx/terobjs/cupboard")) {
+			synchronized (ols) {
+				for (Overlay ol : ols) {
+					if (ol.spr != null && ol.spr.res != null && ol.spr.res.name.equals("gfx/terobjs/items/parchment-decal") && ol.slots != null) {
+						synchronized (ol.slots) {
+							for (RenderTree.Slot slot : ol.slots) {
+								if (Config.flatcupboards) {
+									slot.cstate(Pipe.Op.compose(Location.scale(1, 1, 1.6f), Location.xlate(new Coord3f(0, 0, -5.4f))));
+								} else {
+									slot.cstate(Pipe.Op.compose(Location.scale(1, 1, 1), Location.xlate(new Coord3f(0, 0, 0))));
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 }

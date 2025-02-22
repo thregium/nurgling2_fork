@@ -3,6 +3,8 @@ package haven;
 import java.awt.Color;
 
 public abstract class Listbox<T> extends ListWidget<T> {
+    public static final Color selc = new Color(114, 179, 82, 128);
+    public static final Color overc = new Color(189, 239, 137, 53);
     public int h;
     public final Scrollbar sb;
 

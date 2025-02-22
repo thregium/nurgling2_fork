@@ -830,6 +830,7 @@ public class OptWnd extends Window {
 	public Panel nautomap;
 	public Panel nqolwnd;
 	public Panel nringsettings;
+	public Panel MyOptionPanel;
     public OptWnd(boolean gopts) {
 	super(Coord.z, "Options", true);
 	main = add(new Panel());
@@ -841,6 +842,7 @@ public class OptWnd extends Window {
 	nautomap = add( new NAutoMapperPanel(main));
 	nquickAct = add(new NQuickActionsPanel(main));
 	nringsettings = add(new NRingSettingsPanel(main));
+	MyOptionPanel = add(new MyOption(main));
 
 	int y = 0;
 	int x = 0;
@@ -854,6 +856,7 @@ public class OptWnd extends Window {
 	main.add(new PButton(UI.scale(200), "Auto mapper", 'k', nautomap), x, prev.pos("ur").y);
 	y = (prev = main.add(new PButton(UI.scale(200), "Keybindings", 'k', keybind), 0, y)).pos("bl").adds(0, 5).y;
 	main.add(new PButton(UI.scale(200), "Animal rings settings", 'k', nringsettings), x, prev.pos("ur").y);
+	y = (prev = main.add(new PButton(UI.scale(200), "new options", 'k', MyOptionPanel), 0, y)).pos("bl").adds(0, 5).y;
 
 	y += UI.scale(60);
 	if(gopts) {
@@ -1051,6 +1054,40 @@ public class OptWnd extends Window {
 					return(false);
 				}
 			}, autoMapperSettings.pos("bl").adds(save.sz.x + UI.scale(5), UI.scale(5)));
+			pack();
+		}
+	}
+
+	public class MyOption extends Panel  {
+
+		public MyOption(Panel back) {
+			super();
+			prev = add(new CheckBox("Flatten Cupboards") {
+				{a = Config.flatcupboards;}
+				public void set(boolean val) {
+					Utils.setprefb("flatcupboards", val);
+					Config.flatcupboards = val;
+					a = val;
+				}
+			}, new Coord(UI.scale(5), UI.scale(5)));
+			prev = add(new CheckBox("Flatten Palisades/Brick walls") {
+				{a = Config.flatwalls;}
+				public void set(boolean val) {
+					Utils.setprefb("flatwalls", val);
+					Config.flatwalls = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 5));
+			prev = add(new CheckBox("Flatten Cave Walls") {
+				{a = Config.flatcaves;}
+				public void set(boolean val) {
+					Utils.setprefb("flatcaves", val);
+					Config.flatcaves = val;
+					a = val;
+				}
+			}, prev.pos("bl").adds(0, 5));
+
+			prev = add(new PButton(UI.scale(200), "Back", 27, back), prev.pos("bl").adds(0, 30));
 			pack();
 		}
 	}

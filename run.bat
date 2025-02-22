@@ -1,0 +1,1 @@
+java -Dsun.java2d.uiScale.enabled=false -Dsun.java2d.win.uiScaleX=1.0 -Dsun.java2d.win.uiScaleY=1.0-Xms5120m -Xmx10240m -jar hafen.jar
