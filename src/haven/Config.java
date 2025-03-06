@@ -26,6 +26,10 @@
 
 package haven;
 
+import academy.CustomQualityList;
+
+import java.util.List;
+import java.util.ArrayList;
 import java.util.function.*;
 import java.io.*;
 import java.nio.file.*;
@@ -44,6 +48,8 @@ public class Config {
 	public static boolean flatcupboards = Utils.getprefb("flatcupboards", true);
 	public static boolean flatwalls = Utils.getprefb("flatwalls", false);
 	public static boolean flatcaves = Utils.getprefb("flatcaves", false);
+
+	public static List<String> qualityList = Utils.getprefsl("qualitylist", new String[0]);
 
     private static Config global = null;
     public static Config get() {
